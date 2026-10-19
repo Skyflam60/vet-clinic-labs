@@ -1,0 +1,24 @@
+@startuml
+left to right direction
+actor "Владелец животного" as Owner
+actor "Администратор" as Admin
+actor "Ветеринарный врач" as Doctor
+actor "Руководитель" as Manager
+rectangle "Система управления ветеринарной клиникой" {
+ usecase "Зарегистрировать владельца и животное" as Register
+ usecase "Записать на приём" as Booking
+ usecase "Просмотреть расписание" as Schedule
+ usecase "Провести приём" as Visit
+ usecase "Создать медицинскую запись" as Record
+ usecase "Просмотреть историю лечения" as History
+ usecase "Просмотреть отчёты" as Reports
+}
+Admin --> Register
+Admin --> Booking
+Doctor --> Schedule
+Doctor --> Visit
+Doctor --> Record
+Doctor --> History
+Owner --> History
+Manager --> Reports
+@enduml

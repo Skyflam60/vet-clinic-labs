@@ -1,0 +1,1 @@
+<h2>Животные</h2><table><tr><th>Кличка</th><th>Владелец</th></tr><?php foreach ($animals as $animal): ?><tr><td><a href="/animals/<?= e($animal['id']) ?>"><?= e($animal['name']) ?></a></td><td><?= e($animal['owner']) ?></td></tr><?php endforeach; ?></table>

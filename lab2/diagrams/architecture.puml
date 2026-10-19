@@ -1,0 +1,13 @@
+@startuml
+actor "Пользователь" as User
+rectangle "Веб-интерфейс" as Web
+rectangle "Сервер" as Server
+database "База данных" as DB
+rectangle "Модуль уведомлений" as Notify
+cloud "Почтовый сервис" as Mail
+User --> Web : Работа со страницами
+Web --> Server : Запрос
+Server --> DB : Чтение и сохранение
+Server --> Notify : Подготовить сообщение
+Notify --> Mail : Отправить письмо
+@enduml
