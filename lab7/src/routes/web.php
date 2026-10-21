@@ -1,0 +1,23 @@
+<?php
+use App\Controllers\Api\AppointmentApiController;
+use App\Controllers\Api\AnimalApiController;
+use App\Controllers\Api\OwnerApiController;
+$router->get('/api/appointments', [AppointmentApiController::class, 'index']);
+$router->get('/api/appointments/{id}', [AppointmentApiController::class, 'show']);
+$router->post('/api/appointments', [AppointmentApiController::class, 'store']);
+$router->put('/api/appointments/{id}', [AppointmentApiController::class, 'update']);
+$router->patch('/api/appointments/{id}', [AppointmentApiController::class, 'update']);
+$router->delete('/api/appointments/{id}', [AppointmentApiController::class, 'destroy']);
+$router->get('/api/animals', [AnimalApiController::class, 'index']);
+$router->get('/api/animals/{id}', [AnimalApiController::class, 'show']);
+$router->post('/api/animals', [AnimalApiController::class, 'store']);
+$router->put('/api/animals/{id}', [AnimalApiController::class, 'update']);
+$router->patch('/api/animals/{id}', [AnimalApiController::class, 'update']);
+$router->delete('/api/animals/{id}', [AnimalApiController::class, 'destroy']);
+$router->get('/api/owners', [OwnerApiController::class, 'index']);
+$router->get('/api/owners/{id}', [OwnerApiController::class, 'show']);
+$router->post('/api/owners', [OwnerApiController::class, 'store']);
+$router->put('/api/owners/{id}', [OwnerApiController::class, 'update']);
+$router->patch('/api/owners/{id}', [OwnerApiController::class, 'update']);
+$router->delete('/api/owners/{id}', [OwnerApiController::class, 'destroy']);
+$router->get('/api/animals/{id}/appointments', [AnimalApiController::class, 'appointments']);
