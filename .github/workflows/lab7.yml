@@ -1,0 +1,33 @@
+name: Лабораторная работа 7
+on:
+  push:
+    paths:
+      - 'lab7/**'
+      - '.github/workflows/lab7.yml'
+  workflow_dispatch:
+jobs:
+  api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Проверка PHP
+        run: |
+          php -v
+          php -r 'exit(extension_loaded("mbstring") ? 0 : 1);'
+          find lab7 -name '*.php' -exec php -l {} \;
+      - name: Проверка запросов
+        run: |
+          php -S 127.0.0.1:8000 -t lab7/src/public > /tmp/clinic-php.log 2>&1 &
+          for i in 1 2 3 4 5; do
+            curl -fsS http://127.0.0.1:8000/api/owners > /dev/null && break
+            sleep 1
+          done
+          php lab7/tests/check.php
+      - name: Результаты
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lab7-results
+          path: |
+            lab7/docs/testing.md
+            lab7/docs/requests.txt
