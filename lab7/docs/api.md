@@ -1,6 +1,6 @@
 # Описание API
 
-Адрес сервера: http://localhost:8000. Ответы передаются в JSON. Для POST, PUT и PATCH передаётся объект JSON с заголовком Content-Type: application/json. Авторизации нет, используется локальный учебный сервер.
+Адрес сервера: http://localhost:8000. Ответы передаются в JSON. Для POST, PUT и PATCH передаётся объект JSON с заголовком Content-Type: application/json
 
 ## Таблица запросов
 
@@ -256,16 +256,4 @@
 
 Ответ 204 без тела. Ошибки: 404, 409 при наличии животных, 405, 500.
 
-## Пример curl
 
-```sh
-curl -i http://localhost:8000/api/appointments
-```
-
-Для отправки JSON сохраните тело нужного запроса в request.json в UTF-8:
-
-```sh
-curl -i -X POST -H "Content-Type: application/json" --data-binary @request.json http://localhost:8000/api/owners
-```
-
-В Windows PowerShell используйте curl.exe. Запросы создания, изменения и удаления меняют файлы в src/storage, поэтому проверяйте на учебной копии.
