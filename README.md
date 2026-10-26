@@ -9,6 +9,7 @@
 - [Лабораторная работа №5](lab5/README.md) — клиентская логика.
 - [Лабораторная работа №6](lab6/README.md) — серверная часть.
 - [Лабораторная работа №7](lab7/README.md) — REST API.
+- [Лабораторная работа №8](lab8/README.md) — база данных PostgreSQL.
 
 ## Запуск
 
@@ -17,5 +18,7 @@
 ЛР №6: перейти в lab6/src и выполнить php -S localhost:8000 -t public.
 
 ЛР №7: перейти в lab7/src и выполнить php -S localhost:8000 -t public.
+
+ЛР №8: из lab8 выполнить docker compose up -d, затем docker compose exec db psql -U postgres -d vetdb и по порядку скрипты из lab8/sql (подробно в lab8/README.md).
 
 Для ЛР №6–7 нужен PHP 8.2 или новее с mbstring. Работы запускаются отдельно. ЛР №6 возвращает страницы HTML, ЛР №7 — данные JSON.

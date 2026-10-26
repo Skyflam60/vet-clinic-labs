@@ -1,0 +1,97 @@
+@startuml er
+' ER-диаграмма базы данных ветеринарной клиники (PlantUML)
+' Как открыть: расширение «PlantUML» для VS Code (Alt+D — предпросмотр)
+'              или сайт https://www.plantuml.com/plantuml (вставить текст файла).
+' PK — первичный ключ, FK — внешний ключ, * — обязательное поле (NOT NULL)
+'
+' Обозначения связей:
+'   ||--o{   один ко многим (справа может не быть ни одной строки)
+'   ||--o|   один к одному  (справа не больше одной строки)
+'   |o--o{   один ко многим, ссылка необязательна (внешний ключ может быть NULL)
+
+hide circle
+!pragma layout smetana   ' встроенная раскладка: Graphviz не нужен
+skinparam defaultFontName Arial
+skinparam shadowing false
+skinparam class {
+    BackgroundColor #FFFFFF
+    BorderColor #333333
+    ArrowColor #555555
+    HeaderBackgroundColor #E8F0FE
+}
+
+entity "owners\nвладельцы" as owners {
+    * id : SERIAL <<PK>>
+    --
+    * name : VARCHAR(150) <<CHECK ≥ 3>>
+    * phone : VARCHAR(20) <<UNIQUE>>
+    email : VARCHAR(255) <<UNIQUE, CHECK>>
+    * created_at : TIMESTAMP
+}
+
+entity "animals\nживотные" as animals {
+    * id : SERIAL <<PK>>
+    --
+    * owner_id : INTEGER <<FK>> RESTRICT
+    * name : VARCHAR(100) <<CHECK ≥ 3>>
+    * species : VARCHAR(20) <<CHECK>>
+    breed : VARCHAR(100)
+    sex : CHAR(1) <<CHECK>>
+    birth_date : DATE
+    weight_kg : NUMERIC(5,2) <<CHECK больше 0>>
+    * created_at : TIMESTAMP
+}
+
+entity "doctors\nврачи" as doctors {
+    * id : SERIAL <<PK>>
+    --
+    * name : VARCHAR(150) <<CHECK ≥ 3>>
+    * specialty : VARCHAR(100)
+    phone : VARCHAR(20) <<UNIQUE>>
+    * is_active : BOOLEAN
+}
+
+entity "appointments\nприёмы (основная)" as appointments {
+    * id : SERIAL <<PK>>
+    --
+    * animal_id : INTEGER <<FK>> RESTRICT
+    doctor_id : INTEGER <<FK>> SET NULL
+    * title : VARCHAR(200) <<CHECK ≥ 3>>
+    * scheduled_at : TIMESTAMP
+    * status : VARCHAR(20) <<CHECK>>
+    * created_at : TIMESTAMP
+    ..
+    UNIQUE (doctor_id, scheduled_at)
+}
+
+entity "medical_records\nмедицинские записи" as medical_records {
+    * appointment_id : INTEGER <<PK, FK>> CASCADE
+    --
+    complaints : TEXT
+    * diagnosis : TEXT <<CHECK ≥ 3>>
+    prescriptions : TEXT
+    * created_at : TIMESTAMP
+}
+
+entity "services\nуслуги" as services {
+    * id : SERIAL <<PK>>
+    --
+    * name : VARCHAR(100) <<UNIQUE>>
+    * price : NUMERIC(10,2) <<CHECK ≥ 0>>
+}
+
+entity "appointment_services\nуслуги приёма" as appointment_services {
+    * appointment_id : INTEGER <<PK, FK>> CASCADE
+    * service_id : INTEGER <<PK, FK>> RESTRICT
+    --
+    * quantity : INTEGER <<CHECK больше 0>>
+    * price : NUMERIC(10,2) <<CHECK ≥ 0>>
+}
+
+owners       ||--o{ animals              : "1 : N"
+animals      ||--o{ appointments         : "1 : N"
+doctors      |o--o{ appointments         : "1 : N\nврач необязателен"
+appointments ||--o| medical_records      : "1 : 1"
+appointments ||--o{ appointment_services : "N : M"
+services     ||--o{ appointment_services : "N : M"
+@enduml
