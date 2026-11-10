@@ -1,0 +1,48 @@
+@startuml login-flow
+' Вход по токену, защищённые запросы и выход (лабораторная работа №9)
+!pragma layout smetana
+skinparam defaultFontName Arial
+skinparam shadowing false
+autonumber
+
+actor "Сотрудник" as user
+participant "Клиент\n(app.js, api.js)" as client
+participant "index.php\n«охранник»" as guard
+participant "Контроллер" as ctrl
+database "PostgreSQL\nusers, auth_tokens" as db
+
+user -> client : email и пароль, «Войти»
+client -> guard : POST /api/auth/login {email, password}
+note right of guard : вход — единственный\nадрес API без токена
+guard -> ctrl : AuthController::login
+ctrl -> db : SELECT ... FROM users WHERE lower(email) = lower(:email)
+db --> ctrl : пользователь + password_hash
+ctrl -> ctrl : password_verify(пароль, хеш)
+alt пароль неверный или почты нет
+    ctrl --> client : 401 «Неверный email или пароль»
+else пароль верный
+    ctrl -> db : INSERT INTO auth_tokens (sha256(токен), user_id, срок +2 часа)
+    ctrl --> client : 200 {token, expires_at, user без хеша}
+    client -> client : localStorage: token, user
+end
+
+user -> client : «Удалить» приём
+client -> guard : DELETE /api/appointments/7\nAuthorization: Bearer <токен>
+guard -> db : SELECT user_id FROM auth_tokens\nWHERE token_hash = :hash AND expires_at > now()
+alt токена нет, он отозван или просрочен
+    guard --> client : 401 → экран входа «Сессия истекла»
+else роль не admin
+    guard -> ctrl : AppointmentApiController::destroy
+    ctrl --> client : 403 «Недостаточно прав»
+else роль admin
+    guard -> ctrl : AppointmentApiController::destroy
+    ctrl -> db : DELETE FROM appointments WHERE id = :id
+    ctrl --> client : 204
+end
+
+user -> client : «Выйти»
+client -> guard : POST /api/auth/logout + токен
+guard -> ctrl : AuthController::logout
+ctrl -> db : DELETE FROM auth_tokens WHERE token_hash = :hash
+ctrl --> client : 204, клиент удаляет token из localStorage
+@enduml

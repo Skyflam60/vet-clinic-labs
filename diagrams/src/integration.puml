@@ -1,0 +1,42 @@
+@startuml integration
+' Схема интеграции компонентов системы «Ветеринарная клиника» (лабораторная работа №9)
+!pragma layout smetana
+skinparam defaultFontName Arial
+skinparam shadowing false
+skinparam componentStyle rectangle
+skinparam rectangle {
+    BackgroundColor #FFFFFF
+    BorderColor #555555
+}
+
+actor "Сотрудник клиники\n(администратор, регистратор, врач)" as user
+
+rectangle "Браузер: клиент из ЛР №5\nhttp://localhost:8000/client/" as client {
+    [index.html\nэкраны «Вход» и «Приёмы»] as html
+    [app.js\nсобытия, таблицы, ошибки, кнопки по роли] as app
+    [api.js\nfetch + Authorization: Bearer, checkResponse] as api
+    database "localStorage\ntoken, user" as ls
+}
+
+rectangle "PHP-сервер: REST API из ЛР №7\nphp -S localhost:8000 -t public" as server {
+    [public/index.php\nCORS → «охранник» (401) → Router] as front
+    [Контроллеры\nAuth, Appointment, Animal, Owner,\nDoctor, User: проверка данных (422),\nроли require_role (403)] as ctrl
+    [Модели\nPgRepository + Appointment, Animal,\nOwner, Doctor, UserRepository:\nSQL с параметрами] as models
+    [Core/Auth.php\nвыдача и проверка токенов] as auth
+    [Core/Database.php\nPDO, одно соединение на запрос] as db
+}
+
+database "PostgreSQL 16, база vetdb\nсхема ЛР №8 + users, auth_tokens" as pg
+
+user --> html
+html --> app
+app --> api
+api --> ls
+api --> front : HTTP + JSON\nAuthorization: Bearer <токен>
+front --> ctrl
+front --> auth
+ctrl --> models
+auth --> db
+models --> db
+db --> pg : SQL (подготовленные запросы)
+@enduml
