@@ -1,6 +1,6 @@
 # Описание API ветеринарной клиники
 
-Адрес сервера: `http://localhost:8000`. Клиент открывается по адресу `http://localhost:8000/client/`, поэтому CORS не нужен. Тела запросов и ответов передаются в JSON с заголовком `Content-Type: application/json`. Данные хранятся в PostgreSQL (база `vetdb`, схема из ЛР №8).
+Адрес сервера: `http://localhost:8000`. Клиент открывается по адресу `http://localhost:8000/client/`, поэтому CORS не нужен. Тела запросов и ответов передаются в JSON с заголовком `Content-Type: application/json`. Данные хранятся в PostgreSQL (база `vetdb`).
 
 ## Авторизация
 
